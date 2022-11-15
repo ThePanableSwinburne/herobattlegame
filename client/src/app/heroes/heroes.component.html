@@ -1,0 +1,31 @@
+
+<h2>My Heroes</h2>
+<ul class="heroes">
+  <li *ngFor="let hero of heroes">
+    <button [disabled]='hero.rollAmount <= 0' [class.selected]="hero === selectedHero && hero.rollAmount > 0" type="button" (click)="onSelect(hero)">
+      <span class="badge">rolls left is {{hero.rollAmount}}</span>
+      <br>
+      <span class="red badge red">damage is 1 - {{hero.maximumRoll}}</span>
+      <span class="name">{{hero.heroName}}</span>
+    </button>
+  </li>
+</ul>
+
+<ul class="heroes">
+    <li *ngFor="let enemy of enemies">
+      <button [class.selected]="enemy === selectedEnemy" type="button" (click)="onSelectEnemy(enemy)">
+        <span class="badge">{{enemy.id}}</span>
+        <span class="name">{{enemy.name}}</span>
+      </button>
+    </li>
+  </ul>
+
+<div *ngIf="selectedHero">
+    <h2>{{selectedHero.name | uppercase}} Details</h2>
+    <div>id: {{selectedHero.id}}</div>
+    <div>
+      <label for="hero-name">Hero name: </label>
+      <input id="hero-name" [(ngModel)]="selectedHero.name" placeholder="name">
+    </div>
+  </div>
+<p *ngIf="selectedHero && selectedEnemy">{{selectedHero.heroName}} attacks {{selectedEnemy.name}}</p>
