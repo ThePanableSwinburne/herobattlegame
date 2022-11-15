@@ -13,19 +13,15 @@
 
 <ul class="heroes">
     <li *ngFor="let enemy of enemies">
-      <button [class.selected]="enemy === selectedEnemy" type="button" (click)="onSelectEnemy(enemy)">
-        <span class="badge">{{enemy.id}}</span>
+      <button [disabled]='enemy.health <= 0' [class.selected]="enemy === selectedEnemy" type="button" (click)="onSelectEnemy(enemy)">
+        <span class="badge">health left is {{enemy.health}}</span>
+        <br>
         <span class="name">{{enemy.name}}</span>
       </button>
     </li>
   </ul>
+  
+  <button [disabled]='!(selectedHero && selectedEnemy)'  (click)="rollButton()">Roll</button>
+  <p>{{rollText}}</p>
 
-<div *ngIf="selectedHero">
-    <h2>{{selectedHero.name | uppercase}} Details</h2>
-    <div>id: {{selectedHero.id}}</div>
-    <div>
-      <label for="hero-name">Hero name: </label>
-      <input id="hero-name" [(ngModel)]="selectedHero.name" placeholder="name">
-    </div>
-  </div>
 <p *ngIf="selectedHero && selectedEnemy">{{selectedHero.heroName}} attacks {{selectedEnemy.name}}</p>
