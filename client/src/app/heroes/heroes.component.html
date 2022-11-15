@@ -25,3 +25,12 @@
   <p>{{rollText}}</p>
 
 <p *ngIf="selectedHero && selectedEnemy">{{selectedHero.heroName}} attacks {{selectedEnemy.name}}</p>
+
+<hr>
+
+<h2>Game Records</h2>
+<ul>
+    <li *ngFor="let record of records">
+        <p>{{record.winnerMessage}} at {{record.date}}</p>
+    </li>
+</ul>

@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Hero as hero } from '../models/hero';
 import {HttpClient} from '@angular/common/http'
 import { enemy } from '../models/enemy';
-
+import { gameHistory } from '../models/gameHistory';
+import { timeInterval } from 'rxjs';
 @Component({
   selector: 'app-heroes',
   templateUrl: './heroes.component.html',
@@ -16,6 +17,7 @@ export class HeroesComponent implements OnInit {
 
   heroes: hero[] = [];
   enemies: enemy[] = [];
+  records: gameHistory[] = [];
 
   constructor(private http: HttpClient) { }
 
@@ -42,10 +44,12 @@ export class HeroesComponent implements OnInit {
   ngOnInit(): void {
     this.getHeroes().subscribe(x => {this.heroes = x as hero[]})
     this.getEnemies().subscribe(x => {this.enemies = x as enemy[]})
+    this.getGameHistory().subscribe(x => {this.records = x as gameHistory[]})
   }
 
   rollButton()
   {
+    console.log(this.records.length);
     let heroRoll = this.roll(this.selectedHero.maximumRoll);
     if ((this.selectedEnemy.health - heroRoll) <= 0)
     {
@@ -63,12 +67,19 @@ export class HeroesComponent implements OnInit {
       if (this.checkIfNoEnemies())
       {
         this.rollText = "You guys both lost? HAHAHAHAHH";
+        this.updateRecord(this.records.length, "draw").subscribe(()=>{});
       }
       else
-      this.rollText = "You lost. You are freaking bad at the video game my dude";
+      { 
+        this.updateRecord(this.records.length, "lost").subscribe(()=>{});
+        this.rollText = "You lost. You are freaking bad at the video game my dude";
+      }
     else
       if(this.checkIfNoEnemies())
+      {
+        this.updateRecord(this.records.length, "won").subscribe(()=>{});
         this.rollText = "you won. good job my man";
+      }
     
     
     this.selectedEnemy = null;
@@ -93,7 +104,7 @@ export class HeroesComponent implements OnInit {
 
   getGameHistory()
   {
-
+    return this.http.get<gameHistory[]>('http://localhost:2190/api/gamehistories');
   }
 
   onSelect(hero: hero): void {
@@ -112,6 +123,18 @@ export class HeroesComponent implements OnInit {
       return;
     }
     this.selectedEnemy = enemy;
+  }
+
+  updateRecord(id: number, value: string)
+  {
+    console.log(this.records);
+    let newRecord: gameHistory = {
+      id: id,
+      date: new Date(),
+      winnerMessage: value
+    };
+    this.records.push(newRecord);
+    return this.http.post('http://localhost:2190/api/gamehistories', newRecord);
   }
 
 }
